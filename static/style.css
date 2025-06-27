@@ -1,0 +1,446 @@
+body {
+    background: #f5f6fa;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    width: 95vw;
+    max-width: 1400px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 48px 48px 32px 48px;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.11);
+}
+
+@media (max-width: 900px) {
+    .container {
+        padding: 18px 4vw 18px 4vw;
+    }
+    .dashboard-cards {
+        flex-direction: column;
+        gap: 16px;
+    }
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 32px;
+}
+
+.dashboard-cards {
+    display: flex;
+    gap: 38px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+.card {
+    min-width: 180px;
+    flex: 1 1 220px;
+    max-width: 250px;
+    margin-bottom: 12px;
+}
+
+.card {
+    min-width: 220px;
+    font-size: 1.15rem;
+    padding: 38px 18px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f0f2f7 60%, #e2e6fa 100%);
+    box-shadow: 0 4px 16px rgba(44, 62, 80, 0.08);
+    position: relative;
+    transition: box-shadow 0.2s, background 0.2s, transform 0.2s;
+    cursor: pointer;
+    border: 2px solid transparent;
+    margin-bottom: 10px;
+}
+.card:hover {
+    background: linear-gradient(135deg, #e2e6fa 60%, #d1eaff 100%);
+    box-shadow: 0 8px 32px rgba(44, 62, 80, 0.13);
+    border-color: #7f8ff4;
+    transform: translateY(-2px) scale(1.03);
+}
+.card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    color: #7f8ff4;
+}
+.card-companies .card-icon { color: #4ecca3; }
+.card-invoices .card-icon { color: #f9a826; }
+.card-reports .card-icon { color: #e17055; }
+.card-summary {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #2d3e50;
+}
+.card-detail {
+    font-size: 0.98rem;
+    color: #4d5a6e;
+    margin-bottom: 6px;
+}
+.card h3 {
+    font-size: 1.35rem;
+    margin-bottom: 8px;
+    color: #2d3e50;
+}
+.card p {
+    font-size: 1rem;
+    color: #4d5a6e;
+    margin-bottom: 0;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.menu {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    background: #f0f2f7;
+    border-radius: 7px;
+    padding: 10px 0 0 0;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px 0;
+    border: none;
+    background: none;
+    font-size: 16px;
+    font-weight: 600;
+    color: #2d3e50;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    transition: border 0.2s, background 0.2s;
+}
+.tab-btn.active {
+    border-bottom: 3px solid #2d3e50;
+    background: #e9ebf0;
+}
+
+.tab-content {
+    display: none;
+    margin-top: 18px;
+}
+.tab-content[style*="display:block"] {
+    display: block;
+}
+
+.selected-company {
+  background: #1a237e !important;
+  color: #fff !important;
+  font-weight: bold;
+  border: 2px solid #3949ab;
+  box-shadow: 0 2px 8px rgba(26,35,126,0.10);
+  border-radius: 6px;
+  padding: 6px 12px;
+}
+
+.dashboard-cards {
+    display: flex;
+    gap: 18px;
+    margin-top: 16px;
+    justify-content: center;
+}
+.card {
+    flex: 1;
+    background: #f0f2f7;
+    border-radius: 8px;
+    padding: 22px 14px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: box-shadow 0.2s, background 0.2s;
+}
+.card:hover {
+    background: #e9ebf0;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+input, select, button {
+    width: 100%;
+    margin: 6px 0;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 15px;
+}
+
+button {
+    background: #2d3e50;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+button:hover {
+    background: #1a2533;
+}
+
+#company-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 10px 0;
+}
+#company-list li {
+    background: #f0f2f7;
+    margin: 4px 0;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+#auth-section, #main-section {
+    margin-bottom: 10px;
+}
+
+#auth-message {
+    color: #d00;
+    margin: 8px 0;
+}
+
+/* Tablo için */
+.currency-breakdown {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 8px;
+}
+.currency-breakdown th, .currency-breakdown td {
+    border: 1px solid #d1d9e6;
+    padding: 8px 12px;
+    text-align: center;
+    font-size: 15px;
+}
+.currency-breakdown thead {
+    background: #f4f7fa;
+    font-weight: bold;
+}
+.currency-breakdown tbody tr:nth-child(even) {
+    background: #f8fbfd;
+}
+
+.kdv-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #fff;
+}
+.kdv-badge.plus {
+    background: #4ecca3;
+}
+.kdv-badge.minus {
+    background: #e17055;
+}
+.badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    margin-right: 4px;
+}
+.badge-gelen {
+    background: #4ecca3;
+}
+.badge-giden {
+    background: #f9a826;
+}
+.even-row {
+    background: #f8fbfd;
+}
+.odd-row {
+    background: #fff;
+}
+.gelen-row {
+    border-left: 4px solid #4ecca3;
+}
+.giden-row {
+    border-left: 4px solid #f9a826;
+}
+tr.even-row.gelen-row, tr.odd-row.gelen-row {
+    background: #eafaf4;
+}
+tr.even-row.giden-row, tr.odd-row.giden-row {
+    background: #fff8ea;
+}
+
+#report-last10-table, #invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fafbfc;
+    margin-top: 12px;
+    font-size: 15px;
+}
+#report-last10-table th, #report-last10-table td,
+#invoice-table th, #invoice-table td {
+    border: 1px solid #e0e2e7;
+    padding: 7px 8px;
+    text-align: center;
+}
+#report-last10-table th, #invoice-table th {
+    background: #e9ebf0;
+    font-weight: 600;
+}
+
+/* Modal stil */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0; top: 0; width: 100%; height: 100%;
+    overflow: auto;
+    background: rgba(0,0,0,0.18);
+}
+.modal-content {
+    background: #fff;
+    margin: 7% auto;
+    padding: 28px 18px 18px 18px;
+    border-radius: 8px;
+    max-width: 400px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+    position: relative;
+}
+
+.modal-large {
+    max-width: 90%;
+    width: 1000px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+.close {
+    position: absolute;
+    right: 16px; top: 10px;
+    font-size: 24px;
+    color: #888;
+    cursor: pointer;
+}
+.close:hover {
+    color: #2d3e50;
+}
+
+/* Excel benzeri tablo stili */
+.excel-table-container {
+    margin: 20px 0;
+    overflow-x: auto;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 4px;
+}
+
+.excel-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    background: #fff;
+}
+
+.excel-table th {
+    background-color: #f3f3f3;
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.excel-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: right;
+}
+
+.excel-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.excel-table tr:hover {
+    background-color: #f0f7ff;
+}
+
+.excel-table td.positive {
+    color: #28a745;
+}
+
+.excel-table td.negative {
+    color: #dc3545;
+}
+
+.excel-table td.kdv-detail {
+    font-size: 12px;
+    color: #666;
+}
+
+.export-buttons {
+    margin: 20px 0;
+    text-align: right;
+}
+
+.export-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    margin-left: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.export-btn:hover {
+    background-color: #45a049;
+}
+
+/* Sayfalama stili */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    gap: 15px;
+}
+
+.pagination button {
+    background-color: #2d3e50;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.pagination button:hover {
+    background-color: #1a2530;
+}
+
+.pagination button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.pagination #page-info {
+    font-weight: bold;
+    color: #333;
+}
+
+/* Aylık fatura listesi tablosu için stil */
+.monthly-invoices-container {
+    margin: 20px 0;
+    overflow-x: auto;
+    max-height: 50vh;
+}
+
+/* Tıklanabilir tablo satırları */
+.clickable-row {
+    cursor: pointer;
+}
+
+.clickable-row:hover {
+    background-color: #e9f5ff !important;
+}

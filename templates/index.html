@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Ön Muhasebe Uygulaması</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Ön Muhasebe Uygulaması</h1>
+        <div id="auth-section">
+            <h2>Giriş</h2>
+            <input type="text" id="email" placeholder="Kullanıcı Adı">
+            <input type="password" id="password" placeholder="Şifre">
+            <button onclick="login()">Giriş Yap</button>
+            <div id="auth-message"></div>
+            <div class="auth-info">
+                <p><small>Sadece yetkili kullanıcılar giriş yapabilir.</small></p>
+            </div>
+        </div>
+        <div id="main-section" style="display:none;">
+            <div class="menu">
+    <button class="tab-btn active" onclick="showTab('dashboard')">Ana Sayfa</button>
+    <button class="tab-btn" onclick="showTab('companies')">Şirketler</button>
+    <button class="tab-btn" onclick="showTab('invoices')">Faturalar</button>
+    <button class="tab-btn" onclick="showTab('reports')">Raporlar</button>
+</div>
+            <div id="tab-dashboard" class="tab-content" style="display:block;">
+    <h2>Hoşgeldiniz!</h2>
+    <p>Bu ön muhasebe uygulaması ile şirketlerinizi, faturalarınızı ve raporlarınızı kolayca yönetebilirsiniz.</p>
+    <div class="dashboard-cards">
+    <div class="card card-companies" onclick="showTab('companies')">
+        <div class="card-icon">🏢</div>
+        <h3>Şirketler</h3>
+        <div class="card-summary" id="summary-companies">Toplam: <span>0</span></div>
+        <p>Şirketlerinizi ekleyin ve yönetin.</p>
+    </div>
+    <div class="card card-invoices" onclick="showTab('invoices')">
+        <div class="card-icon">📄</div>
+        <h3>Faturalar</h3>
+        <div class="card-summary" id="summary-invoices">Toplam: <span>0</span></div>
+        <div class="card-detail" id="summary-last-invoice">Son fatura: <span>-</span></div>
+        <p>Faturalarınızı görüntüleyin ve yeni fatura ekleyin.</p>
+    </div>
+    <div class="card card-reports" onclick="showTab('reports')">
+        <div class="card-icon">📊</div>
+        <h3>Raporlar</h3>
+        <div class="card-summary">KDV & Gelir-Gider</div>
+        <p>Gelir-gider ve KDV raporlarınızı alın.</p>
+    </div>
+</div>
+</div>
+<div id="tab-companies" class="tab-content" style="display:none;">
+    <h2>Şirketlerim</h2>
+    <input type="text" id="company-name" placeholder="Şirket Adı">
+    <button onclick="addCompany()">Şirket Ekle</button>
+    <ul id="company-list"></ul>
+</div>
+<div id="tab-invoices" class="tab-content" style="display:none;">
+    <h2>Faturalar</h2>
+    <div id="invoice-company-select"></div>
+    <div id="invoice-content" style="display:none;">
+        <button onclick="showInvoiceModal()">+ Yeni Fatura</button>
+        <table id="invoice-table">
+            <thead>
+                <tr>
+                    <th>No</th><th>Tip</th><th>Müşteri/Tedarikçi</th><th>Tarih</th><th>Tutar</th><th>KDV Oranı</th><th>KDV Tutarı</th><th>Para Birimi</th><th>Açıklama</th><th></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div id="invoice-empty" style="display:none; color:#b00; margin:20px 0;">Lütfen önce bir şirket seçin.</div>
+</div>
+            <div id="tab-reports" class="tab-content" style="display:none;">
+    <h2>Raporlar</h2>
+    <div id="report-controls">
+        <label>Şirket: <select id="report-company-select"></select></label>
+        <label>Yıl: <select id="report-year-select"></select></label>
+        <label>Ay: <select id="report-month-select"><option value="">Tümü</option></select></label>
+        <button onclick="loadReport()">Raporu Göster</button>
+    </div>
+    <div id="report-kpis" class="dashboard-cards" style="margin:24px 0 18px 0;"></div>
+    
+    <h3>Son 10 Fatura</h3>
+    <div id="report-last10-table"></div>
+    
+    <h3>Aylık Detaylı Rapor</h3>
+    <div class="excel-table-container">
+        <table id="monthly-detail-table" class="excel-table">
+            <thead>
+                <tr>
+                    <th>Ay</th>
+                    <th>Gelir</th>
+                    <th>Gider</th>
+                    <th>Net</th>
+                    <th>KDV Gelir</th>
+                    <th>KDV Gider</th>
+                    <th>KDV Net</th>
+                    <th>KDV Oranları</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- JavaScript ile doldurulacak -->
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="export-buttons">
+        <button onclick="exportToExcel()" class="export-btn">Excel'e Aktar</button>
+        <button onclick="printReport()" class="export-btn">Yazdır</button>
+    </div>
+    </div>
+</div>
+        </div>
+        <!-- Fatura Ekleme Modal -->
+        <div id="invoice-modal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeInvoiceModal()">&times;</span>
+                <h3>Yeni Fatura Ekle</h3>
+                <select id="modal-invoice-type">
+                    <option value="gelen">Gelen Fatura</option>
+                    <option value="giden">Giden Fatura</option>
+                </select>
+                <input type="text" id="modal-fatura-no" placeholder="Fatura No">
+                <input type="text" id="modal-musteri-tedarikci" placeholder="Müşteri/Tedarikçi">
+                <input type="date" id="modal-tarih">
+                <input type="number" id="modal-tutar" placeholder="Tutar">
+                <input type="number" id="modal-kdv-orani" placeholder="KDV Oranı">
+                <input type="text" id="modal-aciklama" placeholder="Açıklama">
+                <select id="modal-para-birimi">
+                    <option value="PLN">PLN</option>
+                    <option value="EUR">EUR</option>
+                    <option value="USD">USD</option>
+                </select>
+                <button onclick="addInvoiceModal()">Fatura Kaydet</button>
+            </div>
+        </div>
+        
+        <!-- Aylık Fatura Listesi Modal -->
+        <div id="monthly-invoices-modal" class="modal" style="display:none;">
+            <div class="modal-content modal-large">
+                <span class="close" onclick="closeMonthlyInvoicesModal()">&times;</span>
+                <h3 id="monthly-invoices-title">Aylık Faturalar</h3>
+                
+                <div class="monthly-invoices-container">
+                    <table id="monthly-invoices-table" class="full-width-table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Fatura No</th>
+                                <th>Tip</th>
+                                <th>Müşteri/Tedarikçi</th>
+                                <th>Tarih</th>
+                                <th>Tutar</th>
+                                <th>KDV Oranı</th>
+                                <th>KDV Tutarı</th>
+                                <th>Para Birimi</th>
+                                <th>Açıklama</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- JavaScript ile doldurulacak -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="pagination">
+                    <button id="prev-page" onclick="changePage(-1)">&laquo; Önceki</button>
+                    <span id="page-info">Sayfa 1 / 1</span>
+                    <button id="next-page" onclick="changePage(1)">Sonraki &raquo;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/app.js"></script>
+</body>
+</html>
