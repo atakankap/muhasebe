@@ -65,7 +65,7 @@
         <table id="invoice-table">
             <thead>
                 <tr>
-                    <th>No</th><th>Tip</th><th>Müşteri/Tedarikçi</th><th>Tarih</th><th>Tutar</th><th>KDV Oranı</th><th>KDV Tutarı</th><th>Para Birimi</th><th>Açıklama</th><th></th>
+                    <th>No</th><th>Tip</th><th>Müşteri/Tedarikçi</th><th>Tarih</th><th>Tutar</th><th>KDV Oranı</th><th>KDV Tutarı</th><th>Para Birimi</th><th>Ödeme Yolu</th><th>Açıklama</th><th></th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -120,11 +120,16 @@
                 <span class="close" onclick="closeInvoiceModal()">&times;</span>
                 <h3>Yeni Fatura Ekle</h3>
                 <select id="modal-invoice-type">
-                    <option value="gelen">Gelen Fatura</option>
-                    <option value="giden">Giden Fatura</option>
+                    <option value="gelen">Gelir Faturası</option>
+                    <option value="giden">Gider Faturası</option>
                 </select>
                 <input type="text" id="modal-fatura-no" placeholder="Fatura No">
                 <input type="text" id="modal-musteri-tedarikci" placeholder="Müşteri/Tedarikçi">
+<label for="modal-odeme-yolu">Ödeme Yolu:</label>
+<select id="modal-odeme-yolu">
+  <option value="banka">Banka</option>
+  <option value="elden">Elden</option>
+</select>
                 <input type="date" id="modal-tarih">
                 <input type="number" id="modal-tutar" placeholder="Tutar">
                 <input type="number" id="modal-kdv-orani" placeholder="KDV Oranı">

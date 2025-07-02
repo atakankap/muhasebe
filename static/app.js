@@ -603,6 +603,7 @@ function addInvoiceModal() {
     const kdv_orani = parseFloat(document.getElementById('modal-kdv-orani').value);
     const aciklama = document.getElementById('modal-aciklama').value;
     const para_birimi = document.getElementById('modal-para-birimi').value;
+    const odeme_yolu = document.getElementById('modal-odeme-yolu').value;
     if (!tip || !fatura_no || !musteri_tedarikci || !tarih || isNaN(tutar) || isNaN(kdv_orani) || !selectedCompanyId) {
         alert("Lütfen tüm alanları doldurun ve bir şirket seçin!");
         return;
@@ -611,7 +612,7 @@ function addInvoiceModal() {
     fetch('/api/faturalar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tip, fatura_no, musteri_tedarikci, tarih, tutar, kdv_orani, kdv_tutari, aciklama, para_birimi, company_id: selectedCompanyId })
+        body: JSON.stringify({ tip, fatura_no, musteri_tedarikci, tarih, tutar, kdv_orani, kdv_tutari, aciklama, para_birimi, company_id: selectedCompanyId, odeme_yolu })
     })
     .then(r => r.json())
     .then(data => {
@@ -767,6 +768,7 @@ function renderMonthlyInvoicesTable(invoices) {
             <td>%${invoice.kdv_orani}</td>
             <td>${formatMoney(invoice.kdv_tutari)}</td>
             <td>${invoice.para_birimi}</td>
+            <td>${invoice.odeme_yolu === 'elden' ? 'Elden' : 'Banka'}</td>
             <td>${invoice.aciklama || ''}</td>
         `;
         
@@ -827,6 +829,7 @@ function loadInvoices() {
                 <td>%${f.kdv_orani}</td>
                 <td>${formatMoney(f.kdv_tutari)}</td>
                 <td>${f.para_birimi}</td>
+                <td>${f.odeme_yolu === 'elden' ? 'Elden' : 'Banka'}</td>
                 <td>${f.aciklama || ''}</td>
                 <td>
                     <button class="delete-btn" onclick="deleteFatura(${f.id})" title="Faturayı Sil">❌</button>

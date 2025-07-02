@@ -40,8 +40,7 @@ class User(UserMixin, db.Model):
 class Company(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Ortak kullanım için opsiyonel
 class Invoice(db.Model):
     """
     Fatura Modeli
@@ -56,6 +55,7 @@ class Invoice(db.Model):
     - para_birimi: PLN, EUR, USD
     - company_id: Hangi şirkete ait
     - user_id: Hangi kullanıcıya ait
+    - odeme_yolu: 'elden' veya 'banka' (para hangi yolla alındı/verildi)
     """
     id = db.Column(db.Integer, primary_key=True)
     tip = db.Column(db.String(10), nullable=False)  # 'gelen' veya 'giden'
@@ -69,6 +69,7 @@ class Invoice(db.Model):
     para_birimi = db.Column(db.String(10), nullable=False, default='PLN')
     company_id = db.Column(db.Integer, db.ForeignKey('company.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    odeme_yolu = db.Column(db.String(10), nullable=False, default='banka')  # 'elden' veya 'banka'
 
     company = db.relationship('Company', backref='faturalar', lazy=True)
     user = db.relationship('User', backref='faturalar', lazy=True)

@@ -20,14 +20,15 @@ def fatura_ekle():
     aciklama = data.get('aciklama')
     para_birimi = data.get('para_birimi', 'PLN')
     company_id = data.get('company_id')
+    odeme_yolu = data.get('odeme_yolu')
 
-    if not all([tip, fatura_no, musteri_tedarikci, tarih, tutar, kdv_orani, kdv_tutari, company_id]):
+    if not all([tip, fatura_no, musteri_tedarikci, tarih, tutar, kdv_orani, kdv_tutari, company_id, odeme_yolu]):
         return jsonify({'mesaj': 'Lütfen tüm zorunlu alanları doldurun.'}), 400
     if tip not in ['gelen', 'giden']:
         return jsonify({'mesaj': 'Fatura tipi geçersiz.'}), 400
     if para_birimi not in ['PLN', 'EUR', 'USD']:
         return jsonify({'mesaj': 'Para birimi geçersiz.'}), 400
-    company = Company.query.filter_by(id=company_id, user_id=current_user.id).first()
+    company = Company.query.filter_by(id=company_id).first()
     if not company:
         return jsonify({'mesaj': 'Şirket bulunamadı.'}), 404
 
@@ -42,7 +43,8 @@ def fatura_ekle():
         aciklama=aciklama,
         para_birimi=para_birimi,
         company_id=company_id,
-        user_id=current_user.id
+        user_id=current_user.id,
+        odeme_yolu=odeme_yolu
     )
     db.session.add(fatura)
     db.session.commit()
@@ -57,7 +59,7 @@ def demo_faturalar_ekle():
     adet = int(data.get('adet', 500))
     if not company_id:
         return jsonify({'mesaj': 'Şirket ID gerekli.'}), 400
-    company = Company.query.filter_by(id=company_id, user_id=current_user.id).first()
+    company = Company.query.filter_by(id=company_id).first()
     if not company:
         return jsonify({'mesaj': 'Şirket bulunamadı.'}), 404
     para_birimleri = ['PLN','EUR','USD']
@@ -100,7 +102,7 @@ def faturalar_listele():
     company_id = request.args.get('company_id')
     tip = request.args.get('tip')  # 'gelen' veya 'giden' veya boş
     
-    # Kullanıcı filtresini kaldır - tüm faturalar görünsün
+    # Kullanıcı filtresi kaldırıldı - tüm faturalar ve şirketler ortak
     sorgu = Invoice.query
     
     if company_id:
@@ -141,6 +143,7 @@ def faturalar_listele():
         'kdv_tutari': f.kdv_tutari,
         'aciklama': f.aciklama,
         'para_birimi': f.para_birimi,
+        'odeme_yolu': f.odeme_yolu,
         'company_id': f.company_id
     } for f in faturalar]
     

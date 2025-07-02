@@ -244,10 +244,10 @@ button:hover {
     color: #fff;
     margin-right: 4px;
 }
-.badge-gelen {
+.badge-gelen { /* Gelir Faturası rozeti */
     background: #4ecca3;
 }
-.badge-giden {
+.badge-giden { /* Gider Faturası rozeti */
     background: #f9a826;
 }
 .even-row {
@@ -256,16 +256,16 @@ button:hover {
 .odd-row {
     background: #fff;
 }
-.gelen-row {
+.gelen-row { /* Gelir Faturası satırı */
     border-left: 4px solid #4ecca3;
 }
-.giden-row {
+.giden-row { /* Gider Faturası satırı */
     border-left: 4px solid #f9a826;
 }
-tr.even-row.gelen-row, tr.odd-row.gelen-row {
+tr.even-row.gelen-row, tr.odd-row.gelen-row { /* Gelir Faturası satırı */
     background: #eafaf4;
 }
-tr.even-row.giden-row, tr.odd-row.giden-row {
+tr.even-row.giden-row, tr.odd-row.giden-row { /* Gider Faturası satırı */
     background: #fff8ea;
 }
 
