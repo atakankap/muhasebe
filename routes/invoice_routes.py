@@ -24,7 +24,7 @@ def fatura_ekle():
 
     if not all([tip, fatura_no, musteri_tedarikci, tarih, tutar, kdv_orani, kdv_tutari, company_id, odeme_yolu]):
         return jsonify({'mesaj': 'Lütfen tüm zorunlu alanları doldurun.'}), 400
-    if tip not in ['gelen', 'giden']:
+    if tip not in ['gelen', 'giden', 'acik_gelen', 'acik_giden']:
         return jsonify({'mesaj': 'Fatura tipi geçersiz.'}), 400
     if para_birimi not in ['PLN', 'EUR', 'USD']:
         return jsonify({'mesaj': 'Para birimi geçersiz.'}), 400

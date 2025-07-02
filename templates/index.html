@@ -61,6 +61,16 @@
     <h2>Faturalar</h2>
     <div id="invoice-company-select"></div>
     <div id="invoice-content" style="display:none;">
+        <div style="margin-bottom:10px;">
+          <label for="invoice-type-filter" style="font-weight:600;">Fatura Tipi:</label>
+          <select id="invoice-type-filter" style="width:auto;display:inline-block;margin-left:8px;">
+            <option value="">Tümü</option>
+            <option value="gelen">Gelir</option>
+            <option value="giden">Gider</option>
+            <option value="acik_gelen">Açık Gelir</option>
+            <option value="acik_giden">Açık Gider</option>
+          </select>
+        </div>
         <button onclick="showInvoiceModal()">+ Yeni Fatura</button>
         <table id="invoice-table">
             <thead>
@@ -122,6 +132,8 @@
                 <select id="modal-invoice-type">
                     <option value="gelen">Gelir Faturası</option>
                     <option value="giden">Gider Faturası</option>
+                    <option value="acik_gelen">Açık Gelir Faturası</option>
+                    <option value="acik_giden">Açık Gider Faturası</option>
                 </select>
                 <input type="text" id="modal-fatura-no" placeholder="Fatura No">
                 <input type="text" id="modal-musteri-tedarikci" placeholder="Müşteri/Tedarikçi">

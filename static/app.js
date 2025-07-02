@@ -2,6 +2,85 @@
 let selectedCompanyId = null;
 let reportChart = null;
 
+function login() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const msg = document.getElementById('auth-message');
+    msg.textContent = '';
+    fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+    })
+    .then(r => {
+        if (!r.ok) throw new Error('Giriş başarısız.');
+        return r.json();
+    })
+    .then(data => {
+        document.getElementById('auth-section').style.display = 'none';
+        document.getElementById('main-section').style.display = 'block';
+        msg.textContent = '';
+        loadCompanies && loadCompanies();
+        loadInvoices && loadInvoices();
+    })
+    .catch(e => {
+        msg.textContent = 'Giriş başarısız: ' + (e.message || 'Hatalı kullanıcı veya şifre');
+    });
+}
+
+
+window.addEventListener('DOMContentLoaded', function() {
+    const filter = document.getElementById('invoice-type-filter');
+    if (filter) {
+        filter.addEventListener('change', renderInvoiceTable);
+    }
+});
+
+function loadInvoices() {
+    fetch('/api/faturalar', {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(r => {
+        if (!r.ok) {
+            throw new Error('Faturalar yüklenirken hata');
+        }
+        return r.json();
+    })
+    .then(list => {
+        renderInvoiceTable(list);
+    })
+    .catch(error => {
+        console.error('Faturalar yüklenirken hata:', error);
+    });
+}
+
+function renderInvoiceTable(list) {
+    const filter = document.getElementById('invoice-type-filter')?.value || '';
+    let filtered = list;
+    if (filter) {
+        filtered = list.filter(f => f.tip === filter);
+    }
+    
+    // Tabloyu yeniden çiz
+    const tableBody = document.getElementById('invoice-table-body');
+    tableBody.innerHTML = '';
+    
+    filtered.forEach(f => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${f.id}</td>
+            <td>${f.tip}</td>
+            <td>${f.tarih}</td>
+            <td>${f.miktar}</td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
 // Sekme değiştirme fonksiyonu
 function showTab(tabName) {
     // Tüm sekme içeriklerini gizle
@@ -231,6 +310,14 @@ function renderReportKPIs(data) {
             <div class="kpi-value negative">${formatMoney(data.toplam_giden)} <small>(${data.adet_giden} adet)</small></div>
         </div>
         <div class="card">
+            <h3>Açık Gelir</h3>
+            <div class="kpi-value" style="background:#ffe066;color:#333;border:1px solid #e6c200;">${formatMoney(data.toplam_acik_gelen)} <small>(${data.adet_acik_gelen} adet)</small></div>
+        </div>
+        <div class="card">
+            <h3>Açık Gider</h3>
+            <div class="kpi-value" style="background:#ff7043;color:#fff;border:1px solid #b94c2b;">${formatMoney(data.toplam_acik_giden)} <small>(${data.adet_acik_giden} adet)</small></div>
+        </div>
+        <div class="card">
             <h3>Net</h3>
             <div class="kpi-value ${data.toplam_gelen - data.toplam_giden >= 0 ? 'positive' : 'negative'}">
                 ${formatMoney(data.toplam_gelen - data.toplam_giden)}
@@ -282,12 +369,22 @@ function renderReportTables(data) {
     const tbody = tableArea.querySelector('tbody');
     tbody.innerHTML = '';
     data.son10.forEach((f,i) => {
-        const isGelen = f.tip==='gelen';
+        let tipText = 'Gelir';
+        let tipClass = 'badge-gelen';
+        if (f.tip === 'giden') {
+            tipText = 'Gider';
+            tipClass = 'badge-giden';
+        } else if (f.tip === 'acik_gelen') {
+            tipText = 'Açık Gelir';
+            tipClass = 'badge-acik-gelen';
+        } else if (f.tip === 'acik_giden') {
+            tipText = 'Açık Gider';
+            tipClass = 'badge-acik-giden';
+        }
         const rowClass = i%2===0 ? 'even-row' : 'odd-row';
-        const tipBadge = isGelen ? `<span class='badge badge-gelen'>Gelir</span>` : `<span class='badge badge-giden'>Gider</span>`;
-        tbody.innerHTML += `<tr class='${rowClass} ${isGelen?'gelen-row':'giden-row'}'>
+        tbody.innerHTML += `<tr class='${rowClass}'>
             <td>${i+1}</td>
-            <td>${tipBadge}</td>
+            <td><span class='badge ${tipClass}'>${tipText}</span></td>
             <td>${f.musteri_tedarikci}</td>
             <td>${f.tarih}</td>
             <td>${f.tutar}</td>
@@ -777,23 +874,13 @@ function renderMonthlyInvoicesTable(invoices) {
     document.getElementById('modal-para-birimi').value = 'PLN';
 }
 
+let _allInvoices = [];
+
 function loadInvoices() {
     if (!selectedCompanyId) return;
-    let tip = '';
-    let ay = '';
-    let yil = '';
-    if (document.getElementById('invoice-type')) tip = document.getElementById('invoice-type').value;
-    if (document.getElementById('invoice-month')) ay = document.getElementById('invoice-month').value;
-    if (document.getElementById('invoice-year')) yil = document.getElementById('invoice-year').value;
     let url = `/api/faturalar?company_id=${selectedCompanyId}`;
-    if (tip) url += `&tip=${tip}`;
-    if (ay) url += `&ay=${ay}`;
-    if (yil) url += `&yil=${yil}`;
-    
-    // Yükleniyor mesajı göster
     const tbody = document.querySelector('#invoice-table tbody');
     tbody.innerHTML = '<tr><td colspan="10" class="loading">Faturalar yükleniyor...</td></tr>';
-    
     fetch(url, {
         method: 'GET',
         credentials: 'include',
@@ -808,21 +895,44 @@ function loadInvoices() {
         return r.json();
     })
     .then(list => {
-        tbody.innerHTML = '';
-        
-        if (!list || list.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="10" class="no-data">Fatura bulunamadı</td></tr>';
-            return;
-        }
-        
-        list.forEach((f, i) => {
+        _allInvoices = list;
+        renderInvoiceTable();
+    })
+    .catch(error => {
+        tbody.innerHTML = '<tr><td colspan="10" class="error">Faturalar yüklenirken hata oluştu</td></tr>';
+    });
+}
+
+function renderInvoiceTable() {
+    const tbody = document.querySelector('#invoice-table tbody');
+    tbody.innerHTML = '';
+    if (!_allInvoices || _allInvoices.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10" class="no-data">Fatura bulunamadı</td></tr>';
+        return;
+    }
+    const filter = document.getElementById('invoice-type-filter')?.value || '';
+    let filtered = _allInvoices;
+    if (filter) {
+        filtered = _allInvoices.filter(f => f.tip === filter);
+    }
+    filtered.forEach((f, i) => {
             const tr = document.createElement('tr');
-            const tipText = f.tip === 'gelen' ? 'Gelir' : 'Gider';
-            const tipClass = f.tip === 'gelen' ? 'badge-gelen' : 'badge-giden';
-            
-            tr.innerHTML = `
-                <td>${i+1}</td>
-                <td><span class="badge ${tipClass}">${tipText}</span></td>
+            let tipText = 'Gelir';
+let tipClass = 'badge-gelen';
+if (f.tip === 'giden') {
+    tipText = 'Gider';
+    tipClass = 'badge-giden';
+} else if (f.tip === 'acik_gelen') {
+    tipText = 'Açık Gelir';
+    tipClass = 'badge-acik-gelen';
+} else if (f.tip === 'acik_giden') {
+    tipText = 'Açık Gider';
+    tipClass = 'badge-acik-giden';
+}
+
+tr.innerHTML = `
+    <td>${i+1}</td>
+    <td><span class="badge ${tipClass}">${tipText}</span></td>
                 <td>${f.musteri_tedarikci}</td>
                 <td>${f.tarih}</td>
                 <td>${formatMoney(f.tutar)} ${f.para_birimi}</td>
@@ -837,11 +947,6 @@ function loadInvoices() {
             `;
             tbody.appendChild(tr);
         });
-    })
-    .catch(error => {
-        console.error('Faturalar yüklenirken hata:', error);
-        tbody.innerHTML = '<tr><td colspan="10" class="error">Faturalar yüklenirken hata oluştu</td></tr>';
-    });
 }
 
 // Fatura silme fonksiyonu

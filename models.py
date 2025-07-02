@@ -58,7 +58,7 @@ class Invoice(db.Model):
     - odeme_yolu: 'elden' veya 'banka' (para hangi yolla alındı/verildi)
     """
     id = db.Column(db.Integer, primary_key=True)
-    tip = db.Column(db.String(10), nullable=False)  # 'gelen' veya 'giden'
+    tip = db.Column(db.String(20), nullable=False)  # 'gelen', 'giden', 'acik_gelen', 'acik_giden'
     fatura_no = db.Column(db.String(50), nullable=False)
     musteri_tedarikci = db.Column(db.String(120), nullable=False)
     tarih = db.Column(db.String(20), nullable=False)

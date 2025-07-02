@@ -70,10 +70,14 @@ def rapor_ozet():
         try:
             toplam_gelen = sum(f.tutar or 0 for f in faturalar if f.tip == 'gelen')
             toplam_giden = sum(f.tutar or 0 for f in faturalar if f.tip == 'giden')
+            toplam_acik_gelen = sum(f.tutar or 0 for f in faturalar if f.tip == 'acik_gelen')
+            toplam_acik_giden = sum(f.tutar or 0 for f in faturalar if f.tip == 'acik_giden')
             toplam_kdv_gelen = sum(f.kdv_tutari or 0 for f in faturalar if f.tip == 'gelen')
             toplam_kdv_giden = sum(f.kdv_tutari or 0 for f in faturalar if f.tip == 'giden')
             adet_gelen = sum(1 for f in faturalar if f.tip == 'gelen')
             adet_giden = sum(1 for f in faturalar if f.tip == 'giden')
+            adet_acik_gelen = sum(1 for f in faturalar if f.tip == 'acik_gelen')
+            adet_acik_giden = sum(1 for f in faturalar if f.tip == 'acik_giden')
         except Exception as e:
             print(f"Toplam hesaplama hatası: {str(e)}")
             return jsonify({'error': f"Toplam hesaplama hatası: {str(e)}", 'veri_var_mi': False}), 500
@@ -143,7 +147,7 @@ def rapor_ozet():
                 try:
                     son10_list.append({
                         'id': f.id,
-                        'tip': f.tip if f.tip in ['gelen', 'giden'] else 'gelen',
+                        'tip': f.tip,
                         'fatura_no': f.fatura_no or '',
                         'musteri_tedarikci': f.musteri_tedarikci or '',
                         'tarih': f.tarih or '',
@@ -258,11 +262,15 @@ def rapor_ozet():
             'veri_var_mi': len(faturalar) > 0,
             'toplam_gelen': toplam_gelen,
             'toplam_giden': toplam_giden,
+            'toplam_acik_gelen': toplam_acik_gelen,
+            'toplam_acik_giden': toplam_acik_giden,
             'toplam_kdv_gelen': toplam_kdv_gelen,
             'toplam_kdv_giden': toplam_kdv_giden,
             'toplam_kdv_net': toplam_kdv_gelen - toplam_kdv_giden,
             'adet_gelen': adet_gelen,
             'adet_giden': adet_giden,
+            'adet_acik_gelen': adet_acik_gelen,
+            'adet_acik_giden': adet_acik_giden,
             'toplam_acik': toplam_acik,
             'para_birimi_breakdown': dict(pb),
             'aylik_breakdown': dict(aylik),
